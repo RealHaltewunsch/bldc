@@ -53,6 +53,17 @@ static const I2CConfig i2cfg = {
 		STD_DUTY_CYCLE
 };
 
+/*
+ * LispBM Extensions
+ *
+ * The Minim hw registers a generic extension "hw-set-out" that takes two numeric
+ * arguments: pin (1..3) and state (0/1). Some VESC builds and QML/UI examples expect
+ * helpers named "basic-set-out1", "basic-set-out2", "basic-set-out3". Add those
+ * single-pin helpers here so scripts that call basic-set-out3(...) will work.
+ *
+ * These wrappers are small and only register when the LispBM extensions are loaded.
+ */
+
 static lbm_value ext_basic_set_out(lbm_value *args, lbm_uint argn) {
 	LBM_CHECK_ARGN_NUMBER(2);
 
@@ -94,6 +105,43 @@ static lbm_value ext_basic_set_out(lbm_value *args, lbm_uint argn) {
 	return res;
 }
 
+/* Single-pin wrappers so scripts can call (basic-set-out1 1) etc. */
+static lbm_value ext_basic_set_out1(lbm_value *args, lbm_uint argn) {
+	LBM_CHECK_ARGN_NUMBER(1);
+
+	if (lbm_dec_as_i32(args[0])) {
+		OUT_1_ON();
+	} else {
+		OUT_1_OFF();
+	}
+
+	return ENC_SYM_TRUE;
+}
+
+static lbm_value ext_basic_set_out2(lbm_value *args, lbm_uint argn) {
+	LBM_CHECK_ARGN_NUMBER(1);
+
+	if (lbm_dec_as_i32(args[0])) {
+		OUT_2_ON();
+	} else {
+		OUT_2_OFF();
+	}
+
+	return ENC_SYM_TRUE;
+}
+
+static lbm_value ext_basic_set_out3(lbm_value *args, lbm_uint argn) {
+	LBM_CHECK_ARGN_NUMBER(1);
+
+	if (lbm_dec_as_i32(args[0])) {
+		OUT_3_ON();
+	} else {
+		OUT_3_OFF();
+	}
+
+	return ENC_SYM_TRUE;
+}
+
 static lbm_value ext_speed_last_time(lbm_value *args, lbm_uint argn) {
 	(void)args; (void)argn;
 	return lbm_enc_float(speed_time);
@@ -106,7 +154,14 @@ static lbm_value ext_speed_age(lbm_value *args, lbm_uint argn) {
 
 static void load_extensions(bool main_found) {
 	if (!main_found) {
+		/* Keep existing generic hw-set-out for callers that pass (pin,state). */
 		lbm_add_extension("hw-set-out", ext_basic_set_out);
+
+		/* Add single-pin helpers to match scripts / QML that expect these names. */
+		lbm_add_extension("basic-set-out1", ext_basic_set_out1);
+		lbm_add_extension("basic-set-out2", ext_basic_set_out2);
+		lbm_add_extension("basic-set-out3", ext_basic_set_out3);
+
 		lbm_add_extension("speed-last-time", ext_speed_last_time);
 		lbm_add_extension("speed-age", ext_speed_age);
 	}
