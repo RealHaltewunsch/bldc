@@ -390,24 +390,43 @@ static THD_FUNCTION(fan_control_thread, arg) {
 
 	chRegSetThreadName("fan_control");
 
-	bool fan_on = false;
+	bool fan_enabled = false;
+	const float temp_on = 65.0;
+	const float temp_off = 60.0;
+	const float temp_full = 85.0;
+	const float duty_min = 0.35;
+	const int pwm_period_ms = 100;
 
 	for (;;) {
 		float temp = mc_interface_temp_fet_filtered();
 
-		if (!fan_on && temp > 65.0) {
-			fan_on = true;
-		} else if (fan_on && temp < 60.0) {
-			fan_on = false;
+		if (!fan_enabled && temp > temp_on) {
+			fan_enabled = true;
+		} else if (fan_enabled && temp < temp_off) {
+			fan_enabled = false;
 		}
 
-		if (fan_on) {
+		float duty = 0.0;
+		if (fan_enabled) {
+			duty = utils_map(temp, temp_on, temp_full, duty_min, 1.0);
+			utils_truncate_number(&duty, duty_min, 1.0);
+		}
+
+		int on_time_ms = (int)(duty * (float)pwm_period_ms);
+		utils_truncate_number_int(&on_time_ms, 0, pwm_period_ms);
+		int off_time_ms = pwm_period_ms - on_time_ms;
+
+		if (on_time_ms > 0) {
 			FAN_ON();
+			chThdSleepMilliseconds(on_time_ms);
 		} else {
 			FAN_OFF();
 		}
 
-		chThdSleepMilliseconds(200);
+		if (off_time_ms > 0) {
+			FAN_OFF();
+			chThdSleepMilliseconds(off_time_ms);
+		}
 	}
 }
 #endif
