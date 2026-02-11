@@ -56,7 +56,7 @@ static const I2CConfig i2cfg = {
 /*
  * LispBM Extensions
  *
- * The Minim hw registers a generic extension "hw-set-out" that takes two numeric
+ * The Haltewunsch Mini Pi hw registers a generic extension "hw-set-out" that takes two numeric
  * arguments: pin (1..3) and state (0/1). Some VESC builds and QML/UI examples expect
  * helpers named "basic-set-out1", "basic-set-out2", "basic-set-out3". Add those
  * single-pin helpers here so scripts that call basic-set-out3(...) will work.

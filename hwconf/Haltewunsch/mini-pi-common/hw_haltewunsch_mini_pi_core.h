@@ -17,11 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#ifndef HW_MINIM_CORE_H_
-#define HW_MINIM_CORE_H_
+#ifndef HW_HALTEWUNSCH_MINI_PI_CORE_H_
+#define HW_HALTEWUNSCH_MINI_PI_CORE_H_
 
-#ifdef HW_MINIM
-  #define HW_NAME			"Minim"
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+  #define HW_NAME			"Haltewunsch Mini Pi V1"
+#elif defined(HW_HALTEWUNSCH_MINI_PI_V0)
+  #define HW_NAME			"Haltewunsch Mini Pi V0"
 #else
   #error "Must define hardware type"
 #endif
@@ -29,7 +31,9 @@
 // HW properties
 #define HW_HAS_3_SHUNTS
 #define HW_HAS_PHASE_FILTERS
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
 #define INVERTED_SHUNT_POLARITY
+#endif
 
 // Macros
 #define LED_GREEN_GPIO			GPIOB
@@ -273,4 +277,4 @@
 bool hw_sample_shutdown_button(void);
 void hw_shutdown_set_hold(bool hold);
 
-#endif /* HW_MINIM_CORE_H_ */
+#endif /* HW_HALTEWUNSCH_MINI_PI_CORE_H_ */

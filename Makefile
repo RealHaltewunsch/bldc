@@ -99,6 +99,10 @@ help:
 	@echo "     fw_<board>_clean     - Remove firmware for <board>"
 	@echo "     fw_<board>_flash     - Use OpenOCD + SWD/JTAG to write firmware to <target>"
 	@echo ""
+	@echo "     [Haltewunsch Mini Pi shortcuts]"
+	@echo "     hmpi_v0 / hmpi_v1           - Build Haltewunsch Mini Pi V0 / V1"
+	@echo "     hmpi_v0_flash / hmpi_v1_flash - Build + flash Haltewunsch Mini Pi V0 / V1"
+	@echo ""
 	@echo "     fw_custom            - Build firmware with custom hwconf file locations, you must specify these by setting the HW_SRC and HW_HEADER variables"
 	@echo "     fw_custom_clean      - Remove firmware for custom"
 	@echo "     fw_custom_flash      - Use OpenOCD + SWD/JTAG to write firmware to custom"
@@ -254,6 +258,15 @@ all_fw_clean:  $(addsuffix _clean,  $(FW_TARGETS))
 
 # Expand the firmware rules
 $(foreach board, $(ALL_BOARD_NAMES), $(eval $(call FW_TEMPLATE,$(board),$(BUILD_DIR)/$(board),$(board),$(GIT_BRANCH_NAME),$(GIT_COMMIT_HASH)$(GIT_DIRTY_LABEL),$(ARM_GCC_VERSION),,)))
+
+# Haltewunsch Mini Pi convenience aliases
+.PHONY: hmpi_v0 hmpi_v1 hmpi_v0_flash hmpi_v1_flash hmpi_v0_flash_only hmpi_v1_flash_only
+hmpi_v0: fw_haltewunsch_mini_pi_v0
+hmpi_v1: fw_haltewunsch_mini_pi_v1
+hmpi_v0_flash: haltewunsch_mini_pi_v0_flash
+hmpi_v1_flash: haltewunsch_mini_pi_v1_flash
+hmpi_v0_flash_only: haltewunsch_mini_pi_v0_flash_only
+hmpi_v1_flash_only: haltewunsch_mini_pi_v1_flash_only
 
 .PHONY: fw_custom fw_custom_check
 
