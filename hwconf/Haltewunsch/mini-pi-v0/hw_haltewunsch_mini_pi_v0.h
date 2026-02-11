@@ -17,11 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#ifndef HW_MINIM_H_
-#define HW_MINIM_H_
+#ifndef HW_HALTEWUNSCH_MINI_PI_V0_H_
+#define HW_HALTEWUNSCH_MINI_PI_V0_H_
 
-#define HW_MINIM
+#define HW_HALTEWUNSCH_MINI_PI_V0
 
-#include "hw_minim_core.h"
+#include "hw_haltewunsch_mini_pi_v0_core.h"
 
-#endif /* HW_MINIM_H_ */
+#endif /* HW_HALTEWUNSCH_MINI_PI_V0_H_ */
