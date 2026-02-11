@@ -100,7 +100,7 @@ help:
 	@echo "     fw_<board>_flash     - Use OpenOCD + SWD/JTAG to write firmware to <target>"
 	@echo ""
 	@echo "     [Haltewunsch Mini Pi shortcuts]"
-	@echo "     hmpi_v0 / hmpi_v1             - Build Haltewunsch Mini Pi V0 / V1"
+	@echo "     hmpi_v0 / hmpi_v1           - Build Haltewunsch Mini Pi V0 / V1"
 	@echo "     hmpi_v0_flash / hmpi_v1_flash - Build + flash Haltewunsch Mini Pi V0 / V1"
 	@echo ""
 	@echo "     fw_custom            - Build firmware with custom hwconf file locations, you must specify these by setting the HW_SRC and HW_HEADER variables"
@@ -261,25 +261,12 @@ $(foreach board, $(ALL_BOARD_NAMES), $(eval $(call FW_TEMPLATE,$(board),$(BUILD_
 
 # Haltewunsch Mini Pi convenience aliases
 .PHONY: hmpi_v0 hmpi_v1 hmpi_v0_flash hmpi_v1_flash hmpi_v0_flash_only hmpi_v1_flash_only
-hmpi_v0: fw_mini_pi
-hmpi_v0_flash: mini_pi_flash
-hmpi_v0_flash_only: mini_pi_flash_only
-
-# V1 is built from the same source/header as mini_pi with an extra build macro.
-hmpi_v1:
-	@echo "********* BUILD: mini_pi_v1 **********"
-	$(V1) $(MKDIR) $(BUILD_DIR)/mini_pi_v1
-	$(V1) $(MAKE) -f $(MAKE_DIR)/fw.mk \
-		TCHAIN_PREFIX="$(ARM_SDK_PREFIX)" \
-		BUILDDIR="$(BUILD_DIR)/mini_pi_v1" \
-		PROJECT="mini_pi_v1" \
-		build_args='-DHW_SOURCE="$(ROOT_DIR)/hwconf/Haltewunsch/mini-pi/hw_mini_pi_core.c" -DHW_HEADER="$(ROOT_DIR)/hwconf/Haltewunsch/mini-pi/hw_mini_pi.h" -DHW_MINI_PI_IS_V1 -DGIT_BRANCH_NAME="$(GIT_BRANCH_NAME)" -DGIT_COMMIT_HASH="$(GIT_COMMIT_HASH)$(GIT_DIRTY_LABEL)" -DARM_GCC_VERSION="$(ARM_GCC_VERSION)"' USE_VERBOSE_COMPILE=no
-
-hmpi_v1_flash: hmpi_v1 hmpi_v1_flash_only
-
-hmpi_v1_flash_only:
-	@echo "********* PROGRAM: mini_pi_v1 **********"
-	$(V1) openocd -f board/stm32f4discovery.cfg -c "reset_config trst_only combined" -c "program $(BUILD_DIR)/mini_pi_v1/mini_pi_v1.elf verify reset exit"
+hmpi_v0: fw_haltewunsch_mini_pi_v0
+hmpi_v1: fw_haltewunsch_mini_pi_v1
+hmpi_v0_flash: haltewunsch_mini_pi_v0_flash
+hmpi_v1_flash: haltewunsch_mini_pi_v1_flash
+hmpi_v0_flash_only: haltewunsch_mini_pi_v0_flash_only
+hmpi_v1_flash_only: haltewunsch_mini_pi_v1_flash_only
 
 .PHONY: fw_custom fw_custom_check
 
