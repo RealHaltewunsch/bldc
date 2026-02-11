@@ -46,6 +46,13 @@ static volatile bool sense_thd_running = false;
 static volatile float speed_time = 0.0;
 static volatile systime_t speed_update = 0;
 
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+// Fan control thread (V1 only)
+static THD_WORKING_AREA(fan_control_thread_wa, 128);
+static THD_FUNCTION(fan_control_thread, arg);
+static volatile bool fan_thd_running = false;
+#endif
+
 // I2C configuration
 static const I2CConfig i2cfg = {
 		OPMODE_I2C,
@@ -247,6 +254,11 @@ void hw_init_gpio(void) {
 	palSetPadMode(OUT_2_GPIO, OUT_2_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 	palSetPadMode(OUT_3_GPIO, OUT_3_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+	palSetPadMode(FAN_GPIO, FAN_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
+	FAN_OFF();
+#endif
+
 	OUT_1_OFF();
 	OUT_2_OFF();
 	OUT_3_OFF();
@@ -306,6 +318,13 @@ void hw_setup_adc_channels(void) {
 		chThdCreateStatic(sense_thread_wa, sizeof(sense_thread_wa), NORMALPRIO, sense_thread, NULL);
 		sense_thd_running = true;
 	}
+
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+	if (!fan_thd_running) {
+		chThdCreateStatic(fan_control_thread_wa, sizeof(fan_control_thread_wa), LOWPRIO, fan_control_thread, NULL);
+		fan_thd_running = true;
+	}
+#endif
 }
 
 // ADC-version with filtering and hysteresis
@@ -364,6 +383,53 @@ static THD_FUNCTION(sense_thread, arg) {
 //		chThdSleep(1);
 //	}
 //}
+
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+static THD_FUNCTION(fan_control_thread, arg) {
+	(void)arg;
+
+	chRegSetThreadName("fan_control");
+
+	bool fan_enabled = false;
+	const float temp_on = 65.0;
+	const float temp_off = 60.0;
+	const float temp_full = 85.0;
+	const float duty_min = 0.35;
+	const int pwm_period_ms = 100;
+
+	for (;;) {
+		float temp = mc_interface_temp_fet_filtered();
+
+		if (!fan_enabled && temp > temp_on) {
+			fan_enabled = true;
+		} else if (fan_enabled && temp < temp_off) {
+			fan_enabled = false;
+		}
+
+		float duty = 0.0;
+		if (fan_enabled) {
+			duty = utils_map(temp, temp_on, temp_full, duty_min, 1.0);
+			utils_truncate_number(&duty, duty_min, 1.0);
+		}
+
+		int on_time_ms = (int)(duty * (float)pwm_period_ms);
+		utils_truncate_number_int(&on_time_ms, 0, pwm_period_ms);
+		int off_time_ms = pwm_period_ms - on_time_ms;
+
+		if (on_time_ms > 0) {
+			FAN_ON();
+			chThdSleepMilliseconds(on_time_ms);
+		} else {
+			FAN_OFF();
+		}
+
+		if (off_time_ms > 0) {
+			FAN_OFF();
+			chThdSleepMilliseconds(off_time_ms);
+		}
+	}
+}
+#endif
 
 void hw_start_i2c(void) {
 	i2cAcquireBus(&HW_I2C_DEV);

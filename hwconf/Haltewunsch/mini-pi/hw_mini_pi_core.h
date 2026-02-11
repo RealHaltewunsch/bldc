@@ -79,6 +79,14 @@
 // Hold shutdown pin early to wake up on short pulses
 #define HW_EARLY_INIT()			HW_SHUTDOWN_HOLD_ON()
 
+#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+// Fan output (V1 only)
+#define FAN_GPIO				GPIOD
+#define FAN_PIN				2
+#define FAN_ON()				palSetPad(FAN_GPIO, FAN_PIN)
+#define FAN_OFF()				palClearPad(FAN_GPIO, FAN_PIN)
+#endif
+
 /*
  * ADC Vector
  *
