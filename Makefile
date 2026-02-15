@@ -262,15 +262,6 @@ clean: all_fw_clean all_ut_clean
 # Expand the firmware rules
 $(foreach board, $(ALL_BOARD_NAMES), $(eval $(call FW_TEMPLATE,$(board),$(BUILD_DIR)/$(board),$(board),$(GIT_BRANCH_NAME),$(GIT_COMMIT_HASH)$(GIT_DIRTY_LABEL),$(ARM_GCC_VERSION),,)))
 
-# Haltewunsch Mini Pi convenience aliases
-.PHONY: hmpi_v0 hmpi_v1 hmpi_v0_flash hmpi_v1_flash hmpi_v0_flash_only hmpi_v1_flash_only
-hmpi_v0: fw_haltewunsch_mini_pi_v0
-hmpi_v1: fw_haltewunsch_mini_pi_v1
-hmpi_v0_flash: haltewunsch_mini_pi_v0_flash
-hmpi_v1_flash: haltewunsch_mini_pi_v1_flash
-hmpi_v0_flash_only: haltewunsch_mini_pi_v0_flash_only
-hmpi_v1_flash_only: haltewunsch_mini_pi_v1_flash_only
-
 .PHONY: fw_custom fw_custom_check
 
 ifndef HW_SRC
