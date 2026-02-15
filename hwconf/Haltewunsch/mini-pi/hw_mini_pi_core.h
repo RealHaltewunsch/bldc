@@ -20,10 +20,10 @@
 #ifndef HW_HALTEWUNSCH_MINI_PI_CORE_H_
 #define HW_HALTEWUNSCH_MINI_PI_CORE_H_
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
-  #define HW_NAME			"Haltewunsch Mini Pi V1"
-#elif defined(HW_HALTEWUNSCH_MINI_PI_V0)
-  #define HW_NAME			"Haltewunsch Mini Pi V0"
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
+  #define HW_NAME			"Haltewunsch Mini Pi MK1"
+#elif defined(HW_HALTEWUNSCH_MINI_PI_MK0)
+  #define HW_NAME			"Haltewunsch Mini Pi MK0"
 #else
   #error "Must define hardware type"
 #endif
@@ -31,7 +31,7 @@
 // HW properties
 #define HW_HAS_3_SHUNTS
 #define HW_HAS_PHASE_FILTERS
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
 #define INVERTED_SHUNT_POLARITY
 #endif
 
@@ -79,8 +79,8 @@
 // Hold shutdown pin early to wake up on short pulses
 #define HW_EARLY_INIT()			HW_SHUTDOWN_HOLD_ON()
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
-// Fan output (V1 only)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
+// Fan output (MK1 only)
 #define FAN_GPIO				GPIOD
 #define FAN_PIN				2
 #define FAN_ON()				palSetPad(FAN_GPIO, FAN_PIN)

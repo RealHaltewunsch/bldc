@@ -46,8 +46,8 @@ static volatile bool sense_thd_running = false;
 static volatile float speed_time = 0.0;
 static volatile systime_t speed_update = 0;
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
-// Fan control thread (V1 only)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
+// Fan control thread (MK1 only)
 static THD_WORKING_AREA(fan_control_thread_wa, 128);
 static THD_FUNCTION(fan_control_thread, arg);
 static volatile bool fan_thd_running = false;
@@ -254,7 +254,7 @@ void hw_init_gpio(void) {
 	palSetPadMode(OUT_2_GPIO, OUT_2_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 	palSetPadMode(OUT_3_GPIO, OUT_3_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
 	palSetPadMode(FAN_GPIO, FAN_PIN, PAL_MODE_OUTPUT_PUSHPULL | PAL_STM32_OSPEED_HIGHEST);
 	FAN_OFF();
 #endif
@@ -319,7 +319,7 @@ void hw_setup_adc_channels(void) {
 		sense_thd_running = true;
 	}
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
 	if (!fan_thd_running) {
 		chThdCreateStatic(fan_control_thread_wa, sizeof(fan_control_thread_wa), LOWPRIO, fan_control_thread, NULL);
 		fan_thd_running = true;
@@ -384,7 +384,7 @@ static THD_FUNCTION(sense_thread, arg) {
 //	}
 //}
 
-#if defined(HW_HALTEWUNSCH_MINI_PI_V1)
+#if defined(HW_HALTEWUNSCH_MINI_PI_MK1)
 static THD_FUNCTION(fan_control_thread, arg) {
 	(void)arg;
 
