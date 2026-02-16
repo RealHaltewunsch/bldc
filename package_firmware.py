@@ -199,10 +199,18 @@ package_dict["Maximp_150"] = [['maximp_150', default_name],
                     ['maximp_150_no_limits', no_limits_name]]
 package_dict["Duet"] = [['duet', default_name],
                     ['duet_no_limits', no_limits_name]]
+package_dict["Duet XS100"] = [['duet_xs100', default_name],
+                    ['duet_xs100_no_limits', no_limits_name]]
+package_dict["Duet XS60"] = [['duet_xs60', default_name],
+                    ['duet_xs60_no_limits', no_limits_name]]
 package_dict["Minim"] = [['minim', default_name],
                     ['minim_no_limits', no_limits_name]]
 package_dict["Pronto"] = [['pronto', default_name],
                     ['pronto_no_limits', no_limits_name]]
+package_dict["Classic"] = [['classic', default_name],
+                    ['classic_no_limits', no_limits_name]]
+package_dict["Classicp"] = [['classicp', default_name],
+                    ['classicp_no_limits', no_limits_name]]
 
 # This is the firmware stub string
 res_firmwares_string = '        <file>TARGET_DESTINATION_DIRECTORY/TARGET_DESTINATION_FILENAME</file>\n'
